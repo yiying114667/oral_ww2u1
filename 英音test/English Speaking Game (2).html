@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Speaking Game</title>
+    <script>
+        const words = {
+            "bird": "bird.jpg",
+            "cat": "cat.jpg",
+            "dog": "dog.jpg",
+            "frog": "frog.jpg",
+            "rabbit": "rabbit.jpg",
+            "ox": "ox.jpg"
+        };
+        
+        let currentWord = "";
+
+        function startGame() {
+            const keys = Object.keys(words);
+            currentWord = keys[Math.floor(Math.random() * keys.length)];
+            document.getElementById("image").src = "images/" + words[currentWord];
+            document.getElementById("result").textContent = "";
+            playAudio();
+        }
+
+        function playAudio() {
+            let audio = new Audio("audio/" + currentWord + ".mp3");
+            audio.play();
+        }
+
+        function startSpeechRecognition() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = "en-US";
+            recognition.start();
+            
+            recognition.onresult = function(event) {
+                const speechResult = event.results[0][0].transcript.toLowerCase().trim();
+                if (speechResult === currentWord) {
+                    document.getElementById("result").textContent = "Correct! Well done!";
+                    setTimeout(startGame, 2000);
+                } else {
+                    document.getElementById("result").textContent = "Try again!";
+                }
+            };
+        }
+    </script>
+</head>
+<body onload="startGame()">
+    <h1>Say the Word!</h1>
+    <img id="image" src="" alt="Word Image" width="300">
+    <br>
+    <button onclick="startSpeechRecognition()">Start Speaking</button>
+    <p id="result"></p>
+</body>
+</html>
